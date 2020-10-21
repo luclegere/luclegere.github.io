@@ -1,0 +1,103 @@
+
+body {
+    background: rgb(255, 237, 179);
+    
+
+}
+.block {
+/*background-image: url('flag.png');*/
+    background-size: cover;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 40px;
+    border-width: 5px;
+}
+.blockContainer {
+    display: grid;
+    width: 600px;
+    padding: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+    text-align: center;
+    
+
+    
+}
+
+.big {
+
+}
+
+img {
+    width: 50px;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: "flag.png";
+  }
+
+.menuButton {
+    padding: 5px 0.5em;
+    border: 0px solid blue;
+    background-color: white;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 0.5em;
+    font-size: 1em;
+}
+
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: 0s;
+    transition: all 0s;
+  
+    visibility: hidden;
+    animation: fadeOut 0.5s;
+    animation-fill-mode: forwards;
+  }
+  #overlay * {
+    pointer-events: none;
+  }
+  
+  #overlay.active {
+    visibility: visible;
+    animation: fadeIn 0.5s;
+    animation-fill-mode: forwards;
+  }
+  
+  #overlayin {
+    padding: 1em;
+    padding-left: 4em;
+    padding-right: 4em;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(255, 255, 255);
+    box-shadow: 0 0 20px black;
+  }
+  
+  #overlayin p {
+    text-align: center;
+    font-size: 1em;
+  }
+  
+
+
