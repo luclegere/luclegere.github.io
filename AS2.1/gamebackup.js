@@ -193,20 +193,12 @@ function prepare_dom(s) {
   let nCols = s.cols;
   let nRows = s.rows;
   let nBlocks = nCols * nRows;
+  //const container = document.getElementById('blockContainer');
   let blockSize = blockContainer.clientWidth / nCols;
   //const nBlocks = s.cols * s.rows;
   //const blocks = []; 
-  detect(s);
-
-  if (s.device === "mobile") {
-    blockContainer.style.width = "90vw";
-    blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
-    blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`; 
-  }
-  else {
-    blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
-    blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`;   
-  }
+  blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
+  blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`;   
   for (let i = 0; i < nBlocks; i++) {
     const block = document.createElement('div');
 
@@ -228,78 +220,39 @@ function prepare_dom(s) {
   }
   
   
-  
-
-
-  /*blockContainer.addEventListener('contextmenu', (e) => {
-      if (e.target && e.target.classList.contains("btn")) {
-
-        block_rightclick_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
-        press(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
-      }
-      e.preventDefault();
-  });*/
-
-  if (s.device === "mobile") {
-    var clicklength = 0;
-    let flagdrop = false;
-    blockContainer.addEventListener('touchstart', (e) => {
-      let row = e.target.getAttribute("data-blockRow");
-      let col = e.target.getAttribute("data-blockCol");
-      if (e.target && e.target.classList.contains("btn")) {
-        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col), e.preventDefault()}, 500);
-        $(e.target).mouseup(function() {
-          clearTimeout(clicklength);
-          block_click_cb(s, row, col);
-          return false;
-        });
-      }
-    });
-  }
-
-  else {
-    blockContainer.addEventListener('click', (e) => {
+  blockContainer.addEventListener('click', (e) => {
     if (e.target && e.target.classList.contains("btn")) {
         block_click_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
     }
 
-    });
-    blockContainer.addEventListener('contextmenu', (e) => {
-      if (e.target && e.target.classList.contains("btn")) {
 
+  });
+
+  blockContainer.addEventListener('contextmenu', (e) => {
+      if (e.target && e.target.classList.contains("btn")) {
         block_rightclick_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
+    
       }
       e.preventDefault();
   });
-  }
+
+
+
+ // return blocks;
+
 }
-
-
 
 
 function block_click_cb(s, row, col) {
     console.log(s.game.getRendering().join("\n"));
-    row = Number(row);
-    col = Number(col);
+
     s.game.uncover(row, col);
    // s.game.uncover(row, col);
     console.log(row, col);
     render(s);
     if (s.game.nuncovered === s.game.nrows * s.game.ncols - s.game.nmines) {
-
         console.log("win");
         document.querySelector("#overlay").classList.toggle("active");
-        document.querySelector("#overlay").style.color = "white";
-        document.querySelector("#overlay").innerHTML = "You Win! Click Anywhere to Play Again!";
-  
-  
-    }
-    else if (s.game.exploded) {
-      document.querySelector("#overlay").classList.toggle("active");
-      document.querySelector("#overlay").style.color = "white";
-      document.querySelector("#overlay").innerHTML = "Oh No, You Hit A Mine! Click Anywhere To Retry";
-
-
     }
 
 }
@@ -313,59 +266,39 @@ function block_rightclick_cb(s, row, col) {
     console.log(s.game.getRendering().join("\n"));
 }
 
-
-
 function render(s) {
-    
-    //create appropriate number/size of blocks in container
     const blockContainer = document.querySelector(".blockContainer");
-
     let blockSize = blockContainer.clientWidth / s.cols;
-    if (s.device === "mobile") {
-      blockContainer.style.width = "90vw";
-
-      blockContainer.style.gridTemplateColumns = `repeat(${s.cols}, ${blockSize}px)`;
-      blockContainer.style.gridTemplateRows = `repeat(${s.rows}, ${blockSize}px)`;
-    }
-    else {
-      blockContainer.style.gridTemplateColumns = `repeat(${s.cols}, ${blockSize}px)`;
-      blockContainer.style.gridTemplateRows = `repeat(${s.rows}, ${blockSize}px)`;
-    }
-    
-    //handle new game
+    blockContainer.style.gridTemplateColumns = `repeat(${s.cols}, ${blockSize}px)`;
+    blockContainer.style.gridTemplateRows = `repeat(${s.rows}, ${blockSize}px)`;
     if (s.newgame === true) {
-      
         for (let i = 0; i < blockContainer.children.length; i++) {
             blockContainer.children[i].innerHTML = "";
             blockContainer.children[i].backgroundImage = null;
         }
         s.newgame = false;
     }
-
-    //set attributes of blocks
     for (let i = 0; i < blockContainer.children.length; i++) {
         const block = blockContainer.children[i];
-        if (blockContainer.children.length < 100) { //fix this
+        if (blockContainer.children.length < 100) {
             block.style.textAlign = "center";
             block.style.fontSize = "xx-large";
         }
         else block.style.fontSize = "x-large";
 
-
-        //set block rows/cols based on index
         const ind = Number(block.getAttribute("data-blockInd"));
         block.setAttribute("data-blockRow", Math.floor(ind / s.cols));
         block.setAttribute("data-blockCol", ind % s.cols);
         
-        //only render blocks needed for difficulty
+      
+
         if (ind >= s.rows * s.cols) {
             block.style.display = "none";
+
         }
         else { 
             block.style.display = "block";
         }
-
-        //set colours/style of board
         if (block.getAttribute("data-blockCol") % 2 === 0) {
             if (block.getAttribute("data-blockRow") % 2 === 0) {
                 block.style.backgroundColor = "black";
@@ -374,12 +307,16 @@ function render(s) {
             else {
                 block.style.backgroundColor = "white";
                 block.setAttribute("data-blockSty", "light");
+
+
             }
+
         }
         else {
             if (block.getAttribute("data-blockRow") % 2 === 0) {
                 block.style.backgroundColor = "white";
                 block.setAttribute("data-blockSty", "light");
+
             }
             else { 
                 block.style.backgroundColor = "black";
@@ -387,13 +324,12 @@ function render(s) {
             }   
 
         }
-        //set flags remaining text
         document.getElementById("remaining").innerHTML = (s.game.nmines - s.game.nmarked).toString();
+
         
     }  
 
-    //update colours of blocks if necessary
-    //check for game ending conditions
+
     for (let i = 0; i < s.rows; i++) {
         for (let j = 0; j < s.cols; j++) {
 
@@ -403,28 +339,28 @@ function render(s) {
             let sty = block.getAttribute("data-blockSty");
             let arr = s.game.arr;
             let a = arr[row][col];
-            //game is over; lost
             if (s.game.exploded && a.mine) {
                 stop();
                 console.log("done");
                 block.style.backgroundImage = "url('mine.png')";
             }
-            //block is flagged
-            else if (a.state === "marked") 
+            else if (a.state === "marked") {
                 block.style.backgroundImage = "url('flag.png')";
-            //block is not uncovered
-            else if (a.state === "hidden") 
+            }
+            else if (a.state === "hidden") {
                 block.style.backgroundImage = "";
 
-            else if (a.mine);   //fix lol
-            
+            }
+            else if (a.mine) {
+
+            }
             else {
-                //update colours of blocks, text
                 if (block.getAttribute("data-blockSty") === "dark") {
                     block.style.backgroundColor = "grey";
                 }
                 else {
                     block.style.backgroundColor = "lightgrey";
+
                 }
                 if (a.count === 1)
                     block.style.color = "blue";
@@ -444,6 +380,7 @@ function render(s) {
                     block.style.backgroundImage = "cyan";
                 if (a.count !== 0) {
                     block.innerHTML = a.count.toString();
+
                 }
             }
         }   
@@ -451,11 +388,6 @@ function render(s) {
 
 }
 
-//fix - remove param
-/**
- * Function to start timer
- * @param  s - scene
- */
 function start(s) {
     let t = 0;
     timer = setInterval(function() {
@@ -464,40 +396,25 @@ function start(s) {
     }, 1000);
 }
 
-/**
- * stop timer
- */
 function stop() {
     if (timer) window.clearInterval(timer);
 
 }
-
-/**
- * reset timer
- */
 function reset() {
     if (timer) window.clearInterval(timer);
     document.getElementById("timer").innerHTML = ('000');
 
 }
 
-/**
- * start an easy game
- * @param {} s scene
- */
+
 function easy(s) {
-    //reset timer
-    console.log(s.device);
     reset();
-    //set columns, rows, mines
     s.cols = 10;
     s.rows = 8;
     s.mines = 10;
     s.minesRemaining = 10;
-    s.difficulty = "easy";
     document.getElementById("remaining").innerHTML = s.minesRemaining.toString();
 
-    //start and initialize game
     let game = new MSGame();
     game.init(s.rows, s.cols, s.mines);
     s.game = game;
@@ -506,20 +423,13 @@ function easy(s) {
     render(s);
 }
 
-/**
- * start a medium game
- * @param {} s scene
- */
 function medium(s) {
-    //reset game
     reset();
     s.cols = 18;
     s.rows = 14;
     s.mines = 40;
     s.minesRemaining = 40;
-    s.difficulty = "medium";
     document.getElementById("remaining").innerHTML = s.minesRemaining.toString();
-    
     let game = new MSGame();
     game.init(s.rows, s.cols, s.mines);
     s.game = game;
@@ -529,43 +439,20 @@ function medium(s) {
 }
 
 
-function detect(s) {
-  if (/Mobi/.test(navigator.userAgent) )
-  {
-    s.device = "mobile";
-  }
-  else {
-    s.device = "pc";
-  }
-}
-
-
-
-
-//main function
-
 function main() {
-    //initilaize state
     let state = {
         cols: 18,
         rows: 18,
         mines: 10,
         minesRemaining: 40,
         game: null,
-        newgame: null,
-        difficulty: "easy",
-        device: null
+        newgame: null
     }
-    detect(state);
-   // detect(state);
     let timer = null;
     let html = document.querySelector("html");
-    //prepare doms
     prepare_dom(state);
-    //start an easy game to begin
     easy(state);
 
-    //add listeners for buttons and overlay
     document.getElementById("easyButton").addEventListener("click", () => {
         stop();
         easy(state);
@@ -577,12 +464,11 @@ function main() {
     });
     document.querySelector("#overlay").addEventListener("click", () => {
         document.querySelector("#overlay").classList.remove("active");
-        if (state.difficulty === "easy")
-            easy(state);
-        else medium(state);
+        easy(state);
     });
     
     
+    //prepare_dom(state);
 
 
 }
@@ -590,5 +476,7 @@ function main() {
 
 
 //console.log(game.getRendering().join("\n"));
+
+let game = new MSGame();
 
 
