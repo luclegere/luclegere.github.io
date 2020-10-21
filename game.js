@@ -247,7 +247,11 @@ function prepare_dom(s) {
       let row = e.target.getAttribute("data-blockRow");
       let col = e.target.getAttribute("data-blockCol");
       if (e.target && e.target.classList.contains("btn")) {
+<<<<<<< HEAD
         clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col)}, 1500);
+=======
+        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col), e.preventDefault()}, 1500);
+>>>>>>> d006ab8aa6215a67f081402c605d5903c4ddb936
         $(e.target).mouseup(function() {
           clearTimeout(clicklength);
           block_click_cb(s, row, col);
