@@ -242,12 +242,12 @@ function prepare_dom(s) {
 
   if (s.device === "mobile") {
     var clicklength = 0;
-    let flagdrop = false;
+    //let flagdrop = false;
     blockContainer.addEventListener('touchstart', (e) => {
       let row = e.target.getAttribute("data-blockRow");
       let col = e.target.getAttribute("data-blockCol");
       if (e.target && e.target.classList.contains("btn")) {
-        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col), e.preventDefault()}, 500);
+        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col)}, 1500);
         $(e.target).mouseup(function() {
           clearTimeout(clicklength);
           block_click_cb(s, row, col);
