@@ -63,12 +63,8 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: 0s;
-    transition: all 0s;
-  
     visibility: hidden;
-    animation: fadeOut 0.5s;
-    animation-fill-mode: forwards;
+
   }
   #overlay * {
     pointer-events: none;
@@ -76,8 +72,6 @@ img {
   
   #overlay.active {
     visibility: visible;
-    animation: fadeIn 0.5s;
-    animation-fill-mode: forwards;
   }
   
   #overlayin {
