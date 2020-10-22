@@ -202,7 +202,6 @@ function prepare_dom(s) {
   //detect mobile vs pc
   detect(s);
 
-  //
   if (s.device === "mobile") {
     blockContainer.style.width = "90vw";
     
@@ -511,7 +510,7 @@ function medium(s) {
     render(s);
 }
 
-
+//detect if on mobile or pc
 function detect(s) {
   if (/Mobi/.test(navigator.userAgent) )
   {
