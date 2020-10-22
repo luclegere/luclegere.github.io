@@ -214,31 +214,13 @@ function prepare_dom(s) {
     block.setAttribute("data-blockInd", i);
     block.setAttribute("data-blockRow", Math.floor(i / s.cols));
     block.setAttribute("data-blockCol", i % s.cols);
-  //  block.innerHTML = i;
-    //block.className = "block";
     block.classList.add("btn");
     block.dataset.key = i;
-
-
     blockContainer.append(block);
-    /*block.addEventListener("click", () => {
-        block_click_cb(s, );
-    });*/
+ 
     
   }
   
-  
-  
-
-
-  /*blockContainer.addEventListener('contextmenu', (e) => {
-      if (e.target && e.target.classList.contains("btn")) {
-
-        block_rightclick_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
-        press(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
-      }
-      e.preventDefault();
-  });*/
 
   if (s.device === "mobile") {
     var clicklength = 0;
@@ -346,10 +328,18 @@ function render(s) {
     for (let i = 0; i < blockContainer.children.length; i++) {
         const block = blockContainer.children[i];
         if (blockContainer.children.length < 100) { //fix this
+            block.style.lineHeight = "40px";
             block.style.textAlign = "center";
             block.style.fontSize = "xx-large";
         }
-        else block.style.fontSize = "x-large";
+        else if (s.difficulty === "medium" && s.device === "mobile") {
+          block.style.lineHeight = "20px";
+          block.style.fontSize = "medium";
+        }
+        else {
+          block.style.lineHeight = "40px";
+          block.style.fontSize = "x-large";
+        }
 
 
         //set block rows/cols based on index
