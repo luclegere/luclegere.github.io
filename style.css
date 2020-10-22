@@ -1,7 +1,8 @@
 
 body {
     background: rgb(255, 237, 179);
-
+    user-select: none;
+    -moz-user-select: none;
 
 }
 .block {
@@ -11,6 +12,8 @@ body {
     vertical-align: middle;
     line-height: 40px;
     border-width: 5px;
+    user-select: none;
+    -moz-user-select: none;
 }
 .blockContainer {
     display: grid;
@@ -20,6 +23,9 @@ body {
     margin-right: auto;
     cursor: pointer;
     text-align: center;
+    -webkit-user-select: none;		
+    user-select: none;
+  -moz-user-select: none; 
 
     
   
