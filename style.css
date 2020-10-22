@@ -44,6 +44,9 @@ img {
     justify-content: center;
     align-items: center;
     background-image: "flag.png";
+    -webkit-user-select: none;		
+    user-select: none;
+  -moz-user-select: none; 
   }
 
 .menuButton {
