@@ -1,6 +1,15 @@
+/**
+ * Luc Legere
+ * 30042984
+ * Assignment 2: Minesweeper
+ * luclegere.github.io/index.html
+ * 
+ * Portions of code from Pavol Federl and Emmanuel Onu's SENG 513 content are used throughout Assignment
+ * 
+ */
+
+
 window.addEventListener('load', main);
-
-
 "use strict";
 
 let MSGame = (function(){
@@ -95,13 +104,11 @@ let MSGame = (function(){
         }
         mines[row] = s;
       }
-      console.log("Mines and counts after sprinkling:");
-      console.log(mines.join("\n"), "\n");
+     
     }
     // uncovers a cell at a given coordinate
     // this is the 'left-click' functionality
     uncover(row, col) {
-        console.log("uncover", row, col);
         // if coordinates invalid, refuse this request
         if( ! this.validCoord(row,col)) return false;
         // if this is the very first move, populate the mines, but make
@@ -133,11 +140,9 @@ let MSGame = (function(){
     // puts a flag on a cell
     // this is the 'right-click' or 'long-tap' functionality
     mark(row, col) {
-      console.log("mark", row, col);
       // if coordinates invalid, refuse this request
       if( ! this.validCoord(row,col)) return false;
       // if cell already uncovered, refuse this
-      console.log("marking previous state=", this.arr[row][col].state);
       if( this.arr[row][col].state === STATE_SHOWN) return false;
       // accept the move and flip the marked status
       this.nmarked += this.arr[row][col].state == STATE_MARKED ? -1 : 1;
@@ -194,19 +199,16 @@ function prepare_dom(s) {
   let nRows = s.rows;
   let nBlocks = nCols * nRows;
   let blockSize = blockContainer.clientWidth / nCols;
-  //const nBlocks = s.cols * s.rows;
-  //const blocks = []; 
+  //detect mobile vs pc
   detect(s);
 
+  //
   if (s.device === "mobile") {
     blockContainer.style.width = "90vw";
-    blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
-    blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`; 
+    
   }
-  else {
-    blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
-    blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`;   
-  }
+  blockContainer.style.gridTemplateColumns = `repeat(${nCols}, ${blockSize}px)`;
+  blockContainer.style.gridTemplateRows = `repeat(${nRows}, ${blockSize}px)`; 
   for (let i = 0; i < nBlocks; i++) {
     const block = document.createElement('div');
 
@@ -221,17 +223,17 @@ function prepare_dom(s) {
     
   }
   
-
+  //handle click / long tap for mobile device
   if (s.device === "mobile") {
     var clicklength = 0;
-    //let flagdrop = false;
+    
     blockContainer.addEventListener('touchstart', (e) => {
       let row = e.target.getAttribute("data-blockRow");
       let col = e.target.getAttribute("data-blockCol");
       if (e.target && e.target.classList.contains("btn")) {
-        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col)}, 1000);
+        clicklength = window.setTimeout(function() {block_rightclick_cb(s, row, col)}, 1000);   //flag if tap > 1 second
         $(e.target).mouseup(function() {
-          clearTimeout(clicklength);
+          clearTimeout(clicklength);  //normal tap otherwise
           block_click_cb(s, row, col);
           return false;
         });
@@ -240,6 +242,8 @@ function prepare_dom(s) {
   }
 
   else {
+
+    //on pc handle click / right click
     blockContainer.addEventListener('click', (e) => {
     if (e.target && e.target.classList.contains("btn")) {
         block_click_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
@@ -251,59 +255,49 @@ function prepare_dom(s) {
 
         block_rightclick_cb(s, e.target.getAttribute("data-blockRow"), e.target.getAttribute("data-blockCol"));
       }
-      e.preventDefault();
+      e.preventDefault(); //stop context menu from popping
   });
   }
 }
 
-
-
-
+//Handle left click / short tap on mobile
 function block_click_cb(s, row, col) {
-    console.log(s.game.getRendering().join("\n"));
-    row = Number(row);
+    row = Number(row);    
     col = Number(col);
-    s.game.uncover(row, col);
-   // s.game.uncover(row, col);
-    console.log(row, col);
-    render(s);
+    s.game.uncover(row, col); //uncover in game
+    render(s);  //render board
+    
+    //check for victory
     if (s.game.nuncovered === s.game.nrows * s.game.ncols - s.game.nmines) {
-
-        console.log("win");
         document.querySelector("#overlay").classList.toggle("active");
         document.querySelector("#overlay").style.color = "white";
         document.querySelector("#overlay").innerHTML = "You Win! Click Anywhere to Play Again!";
-  
-  
     }
+    //check for loss
     else if (s.game.exploded) {
       document.querySelector("#overlay").classList.toggle("active");
       document.querySelector("#overlay").style.color = "white";
       document.querySelector("#overlay").innerHTML = "Oh No, You Hit A Mine! Click Anywhere To Retry";
-
-
     }
 
 }
 
 
-
+//Handle right click / long tap on mobile
 function block_rightclick_cb(s, row, col) {
     s.game.mark(row, col);
     render(s);
-    console.log(s.game.getStatus());
-    console.log(s.game.getRendering().join("\n"));
+   
 }
 
 
-
+//Render the board following every move
 function render(s) {
-    
     //create appropriate number/size of blocks in container
     const blockContainer = document.querySelector(".blockContainer");
-
+    //set block size
     let blockSize = blockContainer.clientWidth / s.cols;
-    if (s.device === "mobile") {
+    if (s.device === "mobile") {    
       blockContainer.style.width = "90vw";
 
       blockContainer.style.gridTemplateColumns = `repeat(${s.cols}, ${blockSize}px)`;
@@ -327,15 +321,18 @@ function render(s) {
     //set attributes of blocks
     for (let i = 0; i < blockContainer.children.length; i++) {
         const block = blockContainer.children[i];
-        if (blockContainer.children.length < 100) { //fix this
+        //set font sizes, text alignments
+        if (s.difficulty === "easy") { 
             block.style.lineHeight = "40px";
             block.style.textAlign = "center";
             block.style.fontSize = "xx-large";
         }
+        //decrease font size for medium difficulty on mobile
         else if (s.difficulty === "medium" && s.device === "mobile") {
           block.style.lineHeight = "20px";
           block.style.fontSize = "medium";
         }
+        
         else {
           block.style.lineHeight = "40px";
           block.style.fontSize = "x-large";
@@ -396,7 +393,6 @@ function render(s) {
             //game is over; lost
             if (s.game.exploded && a.mine) {
                 stop();
-                console.log("done");
                 block.style.backgroundImage = "url('mine.png')";
             }
             //block is flagged
@@ -405,9 +401,7 @@ function render(s) {
             //block is not uncovered
             else if (a.state === "hidden") 
                 block.style.backgroundImage = "";
-
-            else if (a.mine);   //fix lol
-            
+            else if (a.mine);
             else {
                 //update colours of blocks, text
                 if (block.getAttribute("data-blockSty") === "dark") {
@@ -441,12 +435,11 @@ function render(s) {
 
 }
 
-//fix - remove param
+
 /**
  * Function to start timer
- * @param  s - scene
  */
-function start(s) {
+function start() {
     let t = 0;
     timer = setInterval(function() {
         t++;
@@ -477,7 +470,7 @@ function reset() {
  */
 function easy(s) {
     //reset timer
-    console.log(s.device);
+
     reset();
     //set columns, rows, mines
     s.cols = 10;
@@ -579,6 +572,5 @@ function main() {
 
 
 
-//console.log(game.getRendering().join("\n"));
 
 

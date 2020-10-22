@@ -23,17 +23,12 @@ body {
     margin-right: auto;
     cursor: pointer;
     text-align: center;
-    -webkit-user-select: none;		
     user-select: none;
-  -moz-user-select: none; 
+    -moz-user-select: none; 
 
-    
   
 }
 
-.big {
-
-}
 
 img {
     width: 50px;
@@ -44,9 +39,8 @@ img {
     justify-content: center;
     align-items: center;
     background-image: "flag.png";
-    -webkit-user-select: none;		
     user-select: none;
-  -moz-user-select: none; 
+    -moz-user-select: none; 
   }
 
 .menuButton {
@@ -75,9 +69,7 @@ img {
     visibility: hidden;
 
   }
-  #overlay * {
-    pointer-events: none;
-  }
+ 
   
   #overlay.active {
     visibility: visible;
